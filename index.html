@@ -6,6 +6,13 @@
     <title>Metro Runner 3D</title>
     <!-- Three.js 3D Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- ADSTERRA POPUNDER AD -->
+    <script src="https://pl31341609.profitableratecpmnetwork.com/ed/fd/a6/edfda653d1f5bc1c856803d2e6e41d2e.js"></script>
+    
+    <!-- ADSTERRA SOCIAL BAR AD -->
+    <script src="https://pl31341604.profitableratecpmnetwork.com/5e/b5/ef/5eb5ef2b6e044231e1115d2bbe5f5851.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -106,9 +113,9 @@
 
         .ad-box-native {
             width: 100%;
-            min-height: 140px;
+            min-height: 250px;
             margin: 12px 0;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px dashed #00f0ff;
             display: flex;
             justify-content: center;
@@ -138,8 +145,6 @@
             display: none;
         }
     </style>
-
-    <!-- ADSTERRA SOCIAL BAR CODE PLACEHOLDER -->
 </head>
 <body>
 
@@ -147,27 +152,42 @@
         
         <!-- HOME / START SCREEN -->
         <div id="start-screen" class="screen">
-            <!-- ১: TOP AD BANNER -->
+            <!-- ১: TOP AD BANNER 320x50 -->
             <div class="ad-zone-top">
-                <!-- ADSTERRA BANNER 320x50 SCRIPT HERE -->
+                <script>
+                  atOptions = {
+                    'key' : 'f82ad32b7dbd8590d385ebdb3c6b1c9d',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highrevenueformat.com/f82ad32b7dbd8590d385ebdb3c6b1c9d/invoke.js"></script>
             </div>
 
             <div class="card-menu">
                 <h1 class="title-text">METRO RUNNER 3D</h1>
                 <p style="font-size: 14px; color: #ccc;">কন্ট্রোল করতে স্ক্রিনে ডানে/বামে সোয়াইপ করুন</p>
                 
-                <!-- HOME NATIVE AD -->
+                <!-- HOME NATIVE AD 300x250 -->
                 <div class="ad-box-native">
-                    <!-- Paste Adsterra Native 300x250 Script Here -->
+                    <script>
+                      atOptions = {
+                        'key' : 'd15e90eccbd9a86b87845dd9f3330852',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                      };
+                    </script>
+                    <script src="https://www.highrevenueformat.com/d15e90eccbd9a86b87845dd9f3330852/invoke.js"></script>
                 </div>
 
                 <button class="btn" onclick="startGame()">START GAME</button>
             </div>
 
-            <!-- ২: BOTTOM AD BANNER -->
-            <div class="ad-zone-bottom">
-                <!-- ADSTERRA BANNER 320x50 SCRIPT HERE -->
-            </div>
+            <div class="ad-zone-bottom"></div>
         </div>
 
         <!-- HUD SCREEN (DURING GAMEPLAY) -->
@@ -177,17 +197,24 @@
                 <div>COINS: 🟡 <span id="coinText">0</span></div>
             </div>
             
-            <div class="ad-zone-top">
-                <!-- ADSTERRA BANNER 320x50 HERE -->
-            </div>
+            <div class="ad-zone-top"></div>
             <div></div>
         </div>
 
-        <!-- GAME OVER SCREEN (চিহ্নিত ১ এবং ২ নম্বর লেআউট অনুযায়ী) -->
+        <!-- GAME OVER SCREEN -->
         <div id="game-over-screen" class="screen">
-            <!-- ১: TOP AD BANNER -->
+            <!-- ১: TOP AD BANNER 320x50 -->
             <div class="ad-zone-top">
-                <!-- ADSTERRA STICKY BANNER 320x50 HERE -->
+                <script>
+                  atOptions = {
+                    'key' : 'f82ad32b7dbd8590d385ebdb3c6b1c9d',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highrevenueformat.com/f82ad32b7dbd8590d385ebdb3c6b1c9d/invoke.js"></script>
             </div>
 
             <div class="card-menu">
@@ -198,18 +225,24 @@
                 <!-- ADSTERRA DIRECT LINK (REWARD AD) -->
                 <button class="btn btn-reward" onclick="openDirectLinkAd()">Watch Ad for 2X Bonus</button>
 
-                <!-- NATIVE AD IN GAME OVER -->
+                <!-- NATIVE AD 300x250 IN GAME OVER -->
                 <div class="ad-box-native">
-                    <!-- Paste Adsterra Native Code Here -->
+                    <script>
+                      atOptions = {
+                        'key' : 'd15e90eccbd9a86b87845dd9f3330852',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                      };
+                    </script>
+                    <script src="https://www.highrevenueformat.com/d15e90eccbd9a86b87845dd9f3330852/invoke.js"></script>
                 </div>
 
                 <button class="btn" onclick="restartGame()">PLAY AGAIN</button>
             </div>
 
-            <!-- ২: BOTTOM AD BANNER -->
-            <div class="ad-zone-bottom">
-                <!-- ADSTERRA STICKY BANNER 320x50 HERE -->
-            </div>
+            <div class="ad-zone-bottom"></div>
         </div>
 
     </div>
@@ -220,7 +253,7 @@
         let player, leftArm, rightArm, leftLeg, rightLeg;
         let isPlaying = false;
         let score = 0, coins = 0;
-        let currentLane = 0; // -1: Left, 0: Center, 1: Right
+        let currentLane = 0;
         const laneWidth = 2.4;
         
         let obstacles = [];
@@ -234,7 +267,7 @@
 
         const cameraOffset = new THREE.Vector3(0, 3.2, 6.5);
 
-        // --- WEB AUDIO SYSTEM (Sound & Music) ---
+        // WEB AUDIO SYSTEM
         let audioCtx = null;
         let bgmInterval = null;
 
@@ -247,7 +280,6 @@
             }
         }
 
-        // Play Coin Collection Sound Effect
         function playCoinSound() {
             if (!audioCtx) return;
             try {
@@ -255,9 +287,8 @@
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
                 
-                // Frequency sweep for "ding" sound
-                osc.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5 note
-                osc.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.08); // E6 note
+                osc.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.08);
 
                 gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
@@ -269,7 +300,6 @@
             } catch (e) {}
         }
 
-        // Background Music Synth Generator
         function startBGM() {
             if (bgmInterval) clearInterval(bgmInterval);
             const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 293.66, 349.23];
@@ -302,7 +332,6 @@
             }
         }
 
-        // --- THREE.JS GRAPHICS SETUP ---
         function initEngine() {
             const container = document.getElementById('game-container');
             
@@ -317,7 +346,6 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // Lighting for Shiny Gold & Neon Effects
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             scene.add(ambientLight);
 
@@ -325,7 +353,6 @@
             dirLight.position.set(5, 25, 15);
             scene.add(dirLight);
 
-            // Track Ground
             const groundGeo = new THREE.PlaneGeometry(9, 600);
             const groundMat = new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.4 });
             const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -333,7 +360,6 @@
             ground.position.z = -250;
             scene.add(ground);
 
-            // Neon Lane Lines
             for(let i = -1; i <= 1; i += 2) {
                 const lineGeo = new THREE.PlaneGeometry(0.12, 600);
                 const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
@@ -343,20 +369,14 @@
                 scene.add(line);
             }
 
-            // Side Pillars
             for(let z = 0; z > -500; z -= 20) {
                 createSidePillar(-6, z);
                 createSidePillar(6, z);
             }
 
-            // Create Animated Humanoid Player
             createPlayer();
-
-            // Window Resize & Controls
             window.addEventListener('resize', onWindowResize);
             setupControls();
-
-            // Render Loop
             animate();
         }
 
@@ -369,47 +389,39 @@
             pillars.push(pillar);
         }
 
-        // --- CHARACTER MODEL WITH LIMBS ---
         function createPlayer() {
             player = new THREE.Group();
             
-            // Torso (Body)
             const bodyGeo = new THREE.BoxGeometry(0.75, 1.1, 0.45);
             const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.2 });
             const body = new THREE.Mesh(bodyGeo, bodyMat);
             body.position.y = 1.05;
             player.add(body);
 
-            // Head
             const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
             const headMat = new THREE.MeshStandardMaterial({ color: 0xff007f });
             const head = new THREE.Mesh(headGeo, headMat);
             head.position.y = 1.85;
             player.add(head);
 
-            // Material for Arms & Legs
             const limbMat = new THREE.MeshStandardMaterial({ color: 0x112244 });
             const armMat = new THREE.MeshStandardMaterial({ color: 0xff007f });
 
-            // Left Arm
             leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.8, 0.22), armMat);
-            leftArm.geometry.translate(0, -0.35, 0); // Pivot at shoulder
+            leftArm.geometry.translate(0, -0.35, 0);
             leftArm.position.set(-0.52, 1.5, 0);
             player.add(leftArm);
 
-            // Right Arm
             rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.8, 0.22), armMat);
             rightArm.geometry.translate(0, -0.35, 0);
             rightArm.position.set(0.52, 1.5, 0);
             player.add(rightArm);
 
-            // Left Leg
             leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.85, 0.26), limbMat);
-            leftLeg.geometry.translate(0, -0.4, 0); // Pivot at hip
+            leftLeg.geometry.translate(0, -0.4, 0);
             leftLeg.position.set(-0.22, 0.85, 0);
             player.add(leftLeg);
 
-            // Right Leg
             rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.85, 0.26), limbMat);
             rightLeg.geometry.translate(0, -0.4, 0);
             rightLeg.position.set(0.22, 0.85, 0);
@@ -458,7 +470,6 @@
         }
 
         function spawnElements() {
-            // Obstacles
             if (Math.random() < 0.05) {
                 let lane = Math.floor(Math.random() * 3) - 1;
                 const obsGeo = new THREE.BoxGeometry(1.3, 1.3, 1.3);
@@ -469,7 +480,6 @@
                 obstacles.push(obs);
             }
 
-            // SHINY GOLDEN COINS
             if (Math.random() < 0.08) {
                 let lane = Math.floor(Math.random() * 3) - 1;
                 const coinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.12, 20);
@@ -493,25 +503,21 @@
             if (isPlaying) {
                 animTimer += 0.18;
 
-                // Smooth Lane Movement
                 const targetX = currentLane * laneWidth;
                 player.position.x += (targetX - player.position.x) * 0.22;
 
-                // Running Animation for Arms & Legs
                 if (!isJumping) {
                     leftArm.rotation.x = Math.sin(animTimer) * 0.75;
                     rightArm.rotation.x = -Math.sin(animTimer) * 0.75;
                     leftLeg.rotation.x = -Math.sin(animTimer) * 0.75;
                     rightLeg.rotation.x = Math.sin(animTimer) * 0.75;
                 } else {
-                    // Jump Pose
                     leftArm.rotation.x = -1.2;
                     rightArm.rotation.x = -1.2;
                     leftLeg.rotation.x = 0.5;
                     rightLeg.rotation.x = -0.5;
                 }
 
-                // Jump Gravity Logic
                 if (isJumping) {
                     player.position.y += jumpVelocity;
                     jumpVelocity -= gravity;
@@ -521,13 +527,11 @@
                     }
                 }
 
-                // Locked Camera Follow
                 camera.position.x = player.position.x;
                 camera.position.y = player.position.y + cameraOffset.y;
                 camera.position.z = player.position.z + cameraOffset.z;
                 camera.lookAt(player.position.x, player.position.y + 1.2, player.position.z - 5);
 
-                // Side Pillars Movement
                 pillars.forEach(p => {
                     p.position.z += gameSpeed;
                     if (p.position.z > 10) p.position.z -= 500;
@@ -535,7 +539,6 @@
 
                 spawnElements();
 
-                // Obstacle Movement & Collision
                 for (let i = obstacles.length - 1; i >= 0; i--) {
                     let obs = obstacles[i];
                     obs.position.z += gameSpeed;
@@ -552,11 +555,10 @@
                     }
                 }
 
-                // Golden Coin Movement, Spinning & Pickup
                 for (let i = coinObjects.length - 1; i >= 0; i--) {
                     let coin = coinObjects[i];
                     coin.position.z += gameSpeed;
-                    coin.rotation.z += 0.08; // Fast Gold Spin
+                    coin.rotation.z += 0.08;
 
                     if (Math.abs(coin.position.z - player.position.z) < 0.85 &&
                         Math.abs(coin.position.x - player.position.x) < 0.85 &&
@@ -564,7 +566,7 @@
                         
                         coins += 1;
                         document.getElementById('coinText').innerText = coins;
-                        playCoinSound(); // Trigger Pickup SFX
+                        playCoinSound();
                         scene.remove(coin);
                         coinObjects.splice(i, 1);
                     }
@@ -633,12 +635,12 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        // ADSTERRA SMARTLINK TRIGGER (Watch Ad Button)
         function openDirectLinkAd() {
-            // Adsterra Direct Link / Smartlink URL
-            window.open('https://www.google.com', '_blank'); 
+            window.open('https://www.profitableratecpmnetwork.com/v1bhcwh9j?key=3a3c77ec4b9a81c5fbf60446f9b5ee4a', '_blank'); 
         }
 
         window.onload = initEngine;
     </script>
 </body>
-                </html>
+                    </html>
