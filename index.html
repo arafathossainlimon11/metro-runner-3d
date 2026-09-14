@@ -57,13 +57,13 @@
 
         /* Card Container */
         .card-menu {
-            background: rgba(10, 15, 30, 0.92);
+            background: rgba(10, 15, 30, 0.94);
             border: 2px solid #00f0ff;
             border-radius: 18px;
             padding: 20px 15px;
             text-align: center;
             color: #ffffff;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
             max-width: 360px;
             width: 92%;
             pointer-events: auto;
@@ -76,7 +76,7 @@
             color: #00f0ff;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-shadow: 0 0 10px rgba(0,240,255,0.5);
         }
 
@@ -92,7 +92,7 @@
             margin-top: 12px;
             width: 100%;
             box-shadow: 0 5px 15px rgba(255, 0, 127, 0.4);
-            transition: transform 0.1s active;
+            transition: transform 0.1s;
         }
 
         .btn:active {
@@ -183,7 +183,7 @@
             <div></div>
         </div>
 
-        <!-- GAME OVER SCREEN (চিহ্নিত ১ এবং ২ ফরম্যাট অনুযায়ী) -->
+        <!-- GAME OVER SCREEN (চিহ্নিত ১ এবং ২ নম্বর লেআউট অনুযায়ী) -->
         <div id="game-over-screen" class="screen">
             <!-- ১: TOP AD BANNER -->
             <div class="ad-zone-top">
@@ -214,10 +214,10 @@
 
     </div>
 
-    <!-- 3D GAME ENGINE SCRIPT -->
+    <!-- 3D GAME ENGINE & AUDIO SCRIPT -->
     <script>
         let scene, camera, renderer;
-        let player, playerBody;
+        let player, leftArm, rightArm, leftLeg, rightLeg;
         let isPlaying = false;
         let score = 0, coins = 0;
         let currentLane = 0; // -1: Left, 0: Center, 1: Right
@@ -230,16 +230,85 @@
         let isJumping = false;
         let jumpVelocity = 0;
         const gravity = 0.018;
+        let animTimer = 0;
 
-        // Camera Offset Locked to Player
         const cameraOffset = new THREE.Vector3(0, 3.2, 6.5);
 
+        // --- WEB AUDIO SYSTEM (Sound & Music) ---
+        let audioCtx = null;
+        let bgmInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Play Coin Collection Sound Effect
+        function playCoinSound() {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                
+                // Frequency sweep for "ding" sound
+                osc.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5 note
+                osc.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.08); // E6 note
+
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.12);
+            } catch (e) {}
+        }
+
+        // Background Music Synth Generator
+        function startBGM() {
+            if (bgmInterval) clearInterval(bgmInterval);
+            const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 293.66, 349.23];
+            let step = 0;
+
+            bgmInterval = setInterval(() => {
+                if (!isPlaying || !audioCtx) return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(notes[step % notes.length], audioCtx.currentTime);
+
+                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.18);
+                    step++;
+                } catch(e) {}
+            }, 200);
+        }
+
+        function stopBGM() {
+            if (bgmInterval) {
+                clearInterval(bgmInterval);
+                bgmInterval = null;
+            }
+        }
+
+        // --- THREE.JS GRAPHICS SETUP ---
         function initEngine() {
             const container = document.getElementById('game-container');
             
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x060612);
-            scene.fog = new THREE.FogExp2(0x060612, 0.02);
+            scene.fog = new THREE.FogExp2(0x060612, 0.018);
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -248,12 +317,12 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            // Lighting for Shiny Gold & Neon Effects
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             scene.add(ambientLight);
 
-            const dirLight = new THREE.DirectionalLight(0x00ffff, 1.0);
-            dirLight.position.set(5, 20, 10);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            dirLight.position.set(5, 25, 15);
             scene.add(dirLight);
 
             // Track Ground
@@ -274,20 +343,20 @@
                 scene.add(line);
             }
 
-            // Side Pillars for Visual Quality
+            // Side Pillars
             for(let z = 0; z > -500; z -= 20) {
                 createSidePillar(-6, z);
                 createSidePillar(6, z);
             }
 
-            // Create Player
+            // Create Animated Humanoid Player
             createPlayer();
 
-            // Resize & Controls
+            // Window Resize & Controls
             window.addEventListener('resize', onWindowResize);
             setupControls();
 
-            // Render
+            // Render Loop
             animate();
         }
 
@@ -300,29 +369,57 @@
             pillars.push(pillar);
         }
 
+        // --- CHARACTER MODEL WITH LIMBS ---
         function createPlayer() {
             player = new THREE.Group();
             
-            // Body
-            const bodyGeo = new THREE.BoxGeometry(0.9, 1.4, 0.7);
+            // Torso (Body)
+            const bodyGeo = new THREE.BoxGeometry(0.75, 1.1, 0.45);
             const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.2 });
-            playerBody = new THREE.Mesh(bodyGeo, bodyMat);
-            playerBody.position.y = 0.7;
-            player.add(playerBody);
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 1.05;
+            player.add(body);
 
             // Head
-            const headGeo = new THREE.BoxGeometry(0.55, 0.55, 0.55);
+            const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
             const headMat = new THREE.MeshStandardMaterial({ color: 0xff007f });
             const head = new THREE.Mesh(headGeo, headMat);
-            head.position.y = 1.65;
+            head.position.y = 1.85;
             player.add(head);
+
+            // Material for Arms & Legs
+            const limbMat = new THREE.MeshStandardMaterial({ color: 0x112244 });
+            const armMat = new THREE.MeshStandardMaterial({ color: 0xff007f });
+
+            // Left Arm
+            leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.8, 0.22), armMat);
+            leftArm.geometry.translate(0, -0.35, 0); // Pivot at shoulder
+            leftArm.position.set(-0.52, 1.5, 0);
+            player.add(leftArm);
+
+            // Right Arm
+            rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.8, 0.22), armMat);
+            rightArm.geometry.translate(0, -0.35, 0);
+            rightArm.position.set(0.52, 1.5, 0);
+            player.add(rightArm);
+
+            // Left Leg
+            leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.85, 0.26), limbMat);
+            leftLeg.geometry.translate(0, -0.4, 0); // Pivot at hip
+            leftLeg.position.set(-0.22, 0.85, 0);
+            player.add(leftLeg);
+
+            // Right Leg
+            rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.85, 0.26), limbMat);
+            rightLeg.geometry.translate(0, -0.4, 0);
+            rightLeg.position.set(0.22, 0.85, 0);
+            player.add(rightLeg);
 
             player.position.set(0, 0, 0);
             scene.add(player);
         }
 
         function setupControls() {
-            // Keyboard
             window.addEventListener('keydown', (e) => {
                 if (!isPlaying) return;
                 if (e.key === 'ArrowLeft' || e.key === 'a') moveLane(-1);
@@ -330,7 +427,6 @@
                 if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') && !isJumping) jump();
             });
 
-            // Touch Swipe
             let touchStartX = 0, touchStartY = 0;
 
             window.addEventListener('touchstart', (e) => {
@@ -362,6 +458,7 @@
         }
 
         function spawnElements() {
+            // Obstacles
             if (Math.random() < 0.05) {
                 let lane = Math.floor(Math.random() * 3) - 1;
                 const obsGeo = new THREE.BoxGeometry(1.3, 1.3, 1.3);
@@ -372,13 +469,19 @@
                 obstacles.push(obs);
             }
 
+            // SHINY GOLDEN COINS
             if (Math.random() < 0.08) {
                 let lane = Math.floor(Math.random() * 3) - 1;
-                const coinGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.1, 16);
-                const coinMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, metalness: 0.9, roughness: 0.1 });
+                const coinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.12, 20);
+                const coinMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xffd700, 
+                    metalness: 0.95, 
+                    roughness: 0.1,
+                    emissive: 0x554400 
+                });
                 const coin = new THREE.Mesh(coinGeo, coinMat);
                 coin.rotation.x = Math.PI / 2;
-                coin.position.set(lane * laneWidth, 0.9, -80);
+                coin.position.set(lane * laneWidth, 1.0, -80);
                 scene.add(coin);
                 coinObjects.push(coin);
             }
@@ -388,11 +491,27 @@
             requestAnimationFrame(animate);
 
             if (isPlaying) {
-                // Smooth Horizontal Lane Movement
+                animTimer += 0.18;
+
+                // Smooth Lane Movement
                 const targetX = currentLane * laneWidth;
                 player.position.x += (targetX - player.position.x) * 0.22;
 
-                // Jump Mechanics
+                // Running Animation for Arms & Legs
+                if (!isJumping) {
+                    leftArm.rotation.x = Math.sin(animTimer) * 0.75;
+                    rightArm.rotation.x = -Math.sin(animTimer) * 0.75;
+                    leftLeg.rotation.x = -Math.sin(animTimer) * 0.75;
+                    rightLeg.rotation.x = Math.sin(animTimer) * 0.75;
+                } else {
+                    // Jump Pose
+                    leftArm.rotation.x = -1.2;
+                    rightArm.rotation.x = -1.2;
+                    leftLeg.rotation.x = 0.5;
+                    rightLeg.rotation.x = -0.5;
+                }
+
+                // Jump Gravity Logic
                 if (isJumping) {
                     player.position.y += jumpVelocity;
                     jumpVelocity -= gravity;
@@ -402,13 +521,13 @@
                     }
                 }
 
-                // CAMERA FOLLOWS PLAYER EXACTLY (LOCKED CAMERA)
+                // Locked Camera Follow
                 camera.position.x = player.position.x;
                 camera.position.y = player.position.y + cameraOffset.y;
                 camera.position.z = player.position.z + cameraOffset.z;
                 camera.lookAt(player.position.x, player.position.y + 1.2, player.position.z - 5);
 
-                // Move Pillars
+                // Side Pillars Movement
                 pillars.forEach(p => {
                     p.position.z += gameSpeed;
                     if (p.position.z > 10) p.position.z -= 500;
@@ -416,7 +535,7 @@
 
                 spawnElements();
 
-                // Obstacles collision & movement
+                // Obstacle Movement & Collision
                 for (let i = obstacles.length - 1; i >= 0; i--) {
                     let obs = obstacles[i];
                     obs.position.z += gameSpeed;
@@ -433,16 +552,19 @@
                     }
                 }
 
-                // Coins Collection
+                // Golden Coin Movement, Spinning & Pickup
                 for (let i = coinObjects.length - 1; i >= 0; i--) {
                     let coin = coinObjects[i];
                     coin.position.z += gameSpeed;
-                    coin.rotation.z += 0.06;
+                    coin.rotation.z += 0.08; // Fast Gold Spin
 
-                    if (Math.abs(coin.position.z - player.position.z) < 0.8 &&
-                        Math.abs(coin.position.x - player.position.x) < 0.8) {
+                    if (Math.abs(coin.position.z - player.position.z) < 0.85 &&
+                        Math.abs(coin.position.x - player.position.x) < 0.85 &&
+                        Math.abs(coin.position.y - (player.position.y + 1.0)) < 1.0) {
+                        
                         coins += 1;
                         document.getElementById('coinText').innerText = coins;
+                        playCoinSound(); // Trigger Pickup SFX
                         scene.remove(coin);
                         coinObjects.splice(i, 1);
                     }
@@ -462,14 +584,17 @@
         }
 
         function startGame() {
+            initAudio();
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('hud-screen').style.display = 'flex';
             resetData();
             isPlaying = true;
+            startBGM();
         }
 
         function gameOver() {
             isPlaying = false;
+            stopBGM();
             document.getElementById('hud-screen').style.display = 'none';
             document.getElementById('game-over-screen').style.display = 'flex';
             document.getElementById('finalScore').innerText = Math.floor(score / 4);
@@ -477,6 +602,7 @@
         }
 
         function restartGame() {
+            initAudio();
             document.getElementById('game-over-screen').style.display = 'none';
             document.getElementById('hud-screen').style.display = 'flex';
             
@@ -487,6 +613,7 @@
 
             resetData();
             isPlaying = true;
+            startBGM();
         }
 
         function resetData() {
@@ -507,11 +634,11 @@
         }
 
         function openDirectLinkAd() {
-            // Adsterra Direct Link/Smartlink URL এখানে বসাবেন
+            // Adsterra Direct Link / Smartlink URL
             window.open('https://www.google.com', '_blank'); 
         }
 
         window.onload = initEngine;
     </script>
 </body>
-  </html>
+                </html>
